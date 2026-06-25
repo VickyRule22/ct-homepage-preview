@@ -1,0 +1,698 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Code and Trust | AI Implementation &amp; Custom Software</title>
+<meta name="description" content="Code and Trust builds custom AI implementations, workflow automations, and software for enterprises. Fixed-price engagements. Measurable ROI in 90 days." />
+<meta name="robots" content="noindex, nofollow" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<style>
+/* ============================================================
+   CLAUDE MP4 : homepage sandbox
+   Hero: satin video showcase (kept). Body: careers LIGHT system
+   (tan paper, plum ink, pink accent) per careers-style-guide.md
+   ============================================================ */
+
+/* hero display face */
+@font-face{font-family:"Eudoxus Display";src:url("./fonts/EudoxusSans-Display.ttf") format("truetype");font-weight:700;font-display:swap}
+@font-face{font-family:"Eudoxus Display";src:url("./fonts/EudoxusSans-Bold.ttf") format("truetype");font-weight:800;font-display:swap}
+/* body face, aliased to the careers 'Eudoxus Sans' name */
+@font-face{font-family:"Eudoxus Sans";src:url("./fonts/EudoxusSans-Light.woff") format("woff");font-weight:300;font-display:swap}
+@font-face{font-family:"Eudoxus Sans";src:url("./fonts/EudoxusSans-Regular.woff") format("woff");font-weight:400;font-display:swap}
+@font-face{font-family:"Eudoxus Sans";src:url("./fonts/EudoxusSans-Medium.woff") format("woff");font-weight:500;font-display:swap}
+@font-face{font-family:"Eudoxus Sans";src:url("./fonts/EudoxusSans-ExtraBold.woff") format("woff");font-weight:700;font-display:swap}
+
+:root{
+  /* careers light tokens */
+  --paper:#F5EFDF;
+  --paper-2:#FBF7EC;
+  --paper-mute:#ECE3CF;
+  --ink:rgba(26,18,34,0.96);
+  --ink-soft:rgba(26,18,34,0.64);
+  --ink-faint:rgba(26,18,34,0.40);
+  --ink-ghost:rgba(26,18,34,0.16);
+  --surface:#ffffff;
+  --dark-bg:#16111F;
+  --rule:rgba(26,18,34,0.12);
+  --rule-soft:rgba(26,18,34,0.06);
+  --accent:#EB2E6B;
+  --accent-tint:rgba(235,46,107,0.10);
+  --accent-warm:#da2560;
+  --shadow-1:0 2px 4px rgba(26,18,34,0.06),0 8px 32px rgba(26,18,34,0.10);
+  --shadow-2:0 4px 8px rgba(26,18,34,0.08),0 24px 60px rgba(26,18,34,0.14);
+  /* hero-scoped helpers (satin hero keeps a dark treatment) */
+  --magenta:#eb2e6b;
+  --magenta-hover:#d4225e;
+  --teal:#55caa4;
+  --on-dark:#ffffff;
+  --on-dark-2:rgba(255,255,255,0.72);
+  --on-dark-faint:rgba(255,255,255,0.45);
+  --border:#e8e2f0;
+  --font-display:"Eudoxus Display","Eudoxus Sans",system-ui,sans-serif;
+  --font-mono:"JetBrains Mono","Space Mono",ui-monospace,monospace;
+  --ease:cubic-bezier(0.16,1,0.3,1);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:"Eudoxus Sans",system-ui,sans-serif;
+  background:var(--paper);
+  color:var(--ink);
+  font-size:16px;line-height:1.65;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+  overflow-x:hidden;
+}
+@media (pointer:fine){ body{cursor:none} a,button{cursor:none} }
+a{color:inherit;text-decoration:none}
+img,video,iframe{display:block;max-width:100%}
+button{font:inherit}
+
+.wrap{max-width:1320px;margin:0 auto;padding:0 56px}
+.wrap-mid{max-width:1080px;margin:0 auto;padding:0 56px}
+@media (max-width:768px){.wrap,.wrap-mid{padding:0 24px}}
+
+/* ---------- grain (paper texture, multiply) ---------- */
+.grain{position:fixed;inset:0;z-index:600;pointer-events:none;opacity:0.42;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.05 0 0 0 0 0.04 0 0 0 0 0.03 0 0 0 0.10 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+/* ---------- custom cursor (theme-agnostic via blend) ---------- */
+.cur-dot,.cur-ring{position:fixed;top:0;left:0;border-radius:50%;pointer-events:none;z-index:9999;mix-blend-mode:difference;will-change:transform}
+.cur-dot{width:5px;height:5px;background:#fff;margin:-2.5px 0 0 -2.5px}
+.cur-ring{width:44px;height:44px;border:1.5px solid rgba(255,255,255,0.85);margin:-22px 0 0 -22px;transition:width .28s var(--ease),height .28s var(--ease),margin .28s var(--ease)}
+.cur-ring.is-hot{width:64px;height:64px;margin:-32px 0 0 -32px}
+@media (pointer:coarse){.cur-dot,.cur-ring{display:none}}
+
+/* ---------- nav (hero chrome, kept) ---------- */
+.nav{position:fixed;top:0;left:0;right:0;height:72px;z-index:200;display:flex;align-items:center;
+  transition:background .35s ease,backdrop-filter .35s ease,border-color .35s ease,box-shadow .35s ease;
+  background:transparent;border-bottom:1px solid transparent}
+.nav.is-scrolled{background:rgba(251,247,236,0.86);backdrop-filter:blur(16px) saturate(160%);border-bottom:1px solid var(--rule);box-shadow:0 1px 0 rgba(26,18,34,0.04)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;width:100%}
+.brand{font-family:var(--font-display);font-weight:800;letter-spacing:0.02em;font-size:18px;color:var(--ink);display:flex;align-items:center;gap:2px}
+.brand .plus{color:var(--accent)}
+.nav:not(.is-scrolled) .brand,.nav:not(.is-scrolled) .nav-links a{color:#fff}
+.nav-links{display:flex;align-items:center;gap:30px}
+.nav-links a{font-family:"Eudoxus Sans",sans-serif;font-weight:600;font-size:13px;letter-spacing:0.01em;color:var(--ink-soft);position:relative;transition:color .2s}
+.nav-links a::after{content:"";position:absolute;left:0;right:0;bottom:-5px;height:1.5px;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform .35s var(--ease)}
+.nav-links a:hover::after{transform:scaleX(1)}
+.nav-cta{font-family:"Eudoxus Sans",sans-serif;font-weight:600;font-size:13px;color:#fff;background:var(--accent);
+  padding:10px 18px;border-radius:999px;box-shadow:0 6px 18px rgba(235,46,107,0.32);transition:transform .3s var(--ease),background .2s;display:inline-block}
+.nav-cta:hover{background:var(--accent-warm)}
+
+/* ================= HERO (satin showcase, kept) ================= */
+.hero{position:relative;min-height:100vh;display:flex;align-items:center;overflow:hidden;background:#0d0a1a}
+.hero .scrim{position:absolute;inset:0;z-index:1;
+  background:
+   radial-gradient(ellipse 90% 70% at 22% 28%, rgba(235,46,107,0.22) 0%, transparent 55%),
+   linear-gradient(180deg, transparent 66%, rgba(15,11,30,0.55) 100%),
+   linear-gradient(100deg, rgba(15,11,30,0.93) 0%, rgba(15,11,30,0.76) 30%, rgba(15,11,30,0.36) 50%, rgba(15,11,30,0.07) 68%, rgba(15,11,30,0) 85%)}
+.hero-grain{position:absolute;inset:0;z-index:2;opacity:.16;pointer-events:none;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.hero .vignette{position:absolute;inset:0;z-index:2;pointer-events:none;
+  background:radial-gradient(ellipse at 60% 50%, transparent 55%, rgba(8,6,16,0.28) 100%)}
+.hero-inner{position:relative;z-index:5;width:100%;max-width:1500px;margin:0 auto;padding:124px 48px 96px;
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(0,420px);gap:60px;align-items:center}
+.hero-copy{text-align:left}
+.hero-show{position:relative;display:flex;align-items:center;justify-content:center}
+.hero-show::before{content:"";position:absolute;width:440px;height:440px;border-radius:50%;z-index:-1;
+  background:radial-gradient(circle,rgba(235,46,107,0.38),rgba(85,202,164,0.12) 45%,transparent 68%);filter:blur(44px);
+  animation:breathe 6s ease-in-out infinite}
+@keyframes breathe{0%,100%{transform:scale(1);opacity:.85}50%{transform:scale(1.08);opacity:1}}
+.device{position:relative;width:328px;height:680px;border-radius:58px;padding:13px;
+  background:linear-gradient(140deg,rgba(255,255,255,.62),rgba(220,226,236,.22) 42%,rgba(255,255,255,.46) 72%,rgba(206,213,226,.32));
+  box-shadow:0 54px 95px -26px rgba(8,6,20,.7),0 14px 34px rgba(8,6,20,.4),inset 0 1px 2px rgba(255,255,255,.95),inset 0 -2px 3px rgba(255,255,255,.55),inset 0 0 0 1px rgba(255,255,255,.4);
+  backdrop-filter:blur(3px) saturate(118%);-webkit-backdrop-filter:blur(3px) saturate(118%);
+  animation:floatY 6.5s ease-in-out infinite;will-change:transform}
+@keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-16px)}}
+.device-glow{position:absolute;inset:0;border-radius:58px;pointer-events:none;mix-blend-mode:screen;
+  background:linear-gradient(160deg,rgba(255,255,255,.55),transparent 28%,transparent 72%,rgba(255,255,255,.4))}
+.device-screen{position:relative;width:302px;height:654px;border-radius:46px;overflow:hidden;background:#fff;box-shadow:inset 0 0 0 2px rgba(0,0,0,.05)}
+.device-screen iframe{width:390px;height:844px;max-width:none;border:0;display:block;transform:scale(.7743);transform-origin:top left}
+.device-notch{position:absolute;top:24px;left:50%;transform:translateX(-50%);width:102px;height:26px;border-radius:16px;background:#0b0f14;z-index:5}
+.hero .kicker{display:inline-flex;align-items:center;gap:10px;color:var(--on-dark-2);font-family:var(--font-mono);
+  font-size:11px;letter-spacing:0.22em;text-transform:uppercase;margin-bottom:26px}
+.hero .kicker .dot{width:7px;height:7px;border-radius:50%;background:var(--teal);box-shadow:0 0 0 0 rgba(85,202,164,0.6);animation:pulse 2.6s var(--ease) infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(85,202,164,0.55)}70%{box-shadow:0 0 0 12px rgba(85,202,164,0)}100%{box-shadow:0 0 0 0 rgba(85,202,164,0)}}
+.hero h1{font-family:var(--font-display);font-weight:800;color:#fff;
+  font-size:clamp(40px,6.4vw,86px);line-height:1.02;letter-spacing:-0.03em;max-width:16ch}
+.hero h1 .accent{
+  background:linear-gradient(120deg,#fff 0%,#f0a9c4 35%,var(--magenta) 60%,#fff 100%);
+  background-size:200% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  animation:metal 7s ease infinite}
+@keyframes metal{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+.hero p.sub{color:var(--on-dark-2);font-size:clamp(16px,1.5vw,20px);line-height:1.6;max-width:54ch;margin:28px 0 38px}
+.hero-cta-row{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.hbtn{font-family:var(--font-display);font-weight:700;font-size:15px;border-radius:999px;padding:16px 30px;
+  display:inline-flex;align-items:center;gap:9px;transition:transform .3s var(--ease),background .2s,border-color .2s,color .2s;border:1.5px solid transparent;will-change:transform}
+.hbtn-primary{background:var(--magenta);color:#fff;box-shadow:0 10px 30px rgba(235,46,107,0.4)}
+.hbtn-primary:hover{background:var(--magenta-hover)}
+.hbtn-ghost{background:rgba(255,255,255,0.06);color:#fff;border-color:rgba(255,255,255,0.28);backdrop-filter:blur(6px)}
+.hbtn-ghost:hover{border-color:#fff;background:rgba(255,255,255,0.12)}
+.hero .phone{margin-top:34px;font-family:var(--font-mono);font-size:13px;letter-spacing:0.08em;color:var(--on-dark-faint)}
+.scroll-hint{position:absolute;bottom:30px;left:50%;transform:translateX(-50%);z-index:5;color:var(--on-dark-faint);
+  font-family:var(--font-mono);font-size:10px;letter-spacing:0.25em;text-transform:uppercase;display:flex;flex-direction:column;align-items:center;gap:10px}
+.scroll-hint .line{width:1px;height:40px;background:linear-gradient(var(--on-dark-faint),transparent);animation:drip 2.2s var(--ease) infinite}
+@keyframes drip{0%{transform:scaleY(0);transform-origin:top}45%{transform:scaleY(1);transform-origin:top}55%{transform:scaleY(1);transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+
+/* ================= SHARED SYSTEM ================= */
+section{padding:140px 0;position:relative}
+section.alt{background:var(--paper-2)}
+.section-head{margin-bottom:80px}
+.eyebrow{font-family:"Eudoxus Sans",sans-serif;font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--ink-faint);display:inline-flex;align-items:center;gap:14px;margin-bottom:28px}
+.eyebrow::before{content:'';display:inline-block;width:32px;height:1px;background:var(--accent);flex-shrink:0}
+.eyebrow-num{color:var(--accent);font-weight:700}
+h2.display{font-family:"Eudoxus Sans",sans-serif;font-weight:700;font-size:clamp(40px,4.5vw,60px);
+  line-height:1.1;letter-spacing:-0.02em;color:var(--ink)}
+h2.display em{font-style:normal;color:var(--accent)}
+.head-sub{font-size:clamp(17px,1.6vw,20px);line-height:1.55;color:var(--ink-soft);max-width:62ch;margin-top:26px}
+
+/* reveal */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .85s var(--ease),transform .85s var(--ease)}
+.reveal.in{opacity:1;transform:none}
+.reveal[data-d="1"]{transition-delay:.08s}
+.reveal[data-d="2"]{transition-delay:.16s}
+.reveal[data-d="3"]{transition-delay:.24s}
+
+/* buttons (careers sweep) */
+.btn{display:inline-flex;align-items:center;gap:12px;padding:18px 34px;font-family:"Eudoxus Sans",sans-serif;
+  font-size:14px;font-weight:500;letter-spacing:0.01em;border:none;border-radius:999px;position:relative;overflow:hidden;
+  transition:transform .5s cubic-bezier(0.22,1,0.36,1),box-shadow .5s cubic-bezier(0.22,1,0.36,1);will-change:transform}
+.btn:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(26,18,34,0.16)}
+.btn>*{position:relative;z-index:1}
+.btn-arrow{transition:transform .5s cubic-bezier(0.22,1,0.36,1)}
+.btn:hover .btn-arrow{transform:translateX(6px)}
+.btn-fill{background:var(--accent);color:#FBF7EC}
+.btn-fill::after{content:'';position:absolute;inset:0;background:var(--dark-bg);transform:translateX(-101%);
+  transition:transform .6s cubic-bezier(0.65,0,0.35,1);z-index:0}
+.btn-fill:hover::after{transform:translateX(0)}
+.btn-ghost{background:transparent;color:var(--ink);border:1px solid var(--ink)}
+.btn-ghost::after{content:'';position:absolute;inset:0;background:var(--ink);transform:scaleY(0);transform-origin:bottom;
+  transition:transform .6s cubic-bezier(0.65,0,0.35,1);z-index:0}
+.btn-ghost:hover::after{transform:scaleY(1)}
+.btn-ghost>*{transition:color .5s ease}
+.btn-ghost:hover>*{color:var(--paper)}
+
+/* velocity */
+.velo-grid{display:grid;grid-template-columns:1fr auto;gap:48px;align-items:end}
+.lead-p{font-size:clamp(18px,2vw,22px);line-height:1.5;color:var(--ink-soft);max-width:48ch}
+
+/* team */
+.team-grid{display:grid;grid-template-columns:1.05fr 1fr;gap:64px;align-items:center}
+.wordmark2{font-family:var(--font-display);font-weight:800;font-size:clamp(34px,5vw,60px);letter-spacing:-0.02em;
+  line-height:1;color:var(--ink);margin-bottom:24px}
+.wordmark2 span{color:var(--accent)}
+.body-lg{font-size:18px;line-height:1.55;color:var(--ink-soft);max-width:46ch}
+.stat-row{display:flex;gap:48px;margin-top:38px;flex-wrap:wrap}
+.stat-n{font-family:"Eudoxus Sans",sans-serif;font-weight:700;font-size:42px;letter-spacing:-0.02em;color:var(--ink);line-height:1}
+.stat-l{font-size:13px;color:var(--ink-faint);margin-top:6px;max-width:18ch}
+.quote-card{background:var(--surface);border:1px solid var(--rule);border-radius:4px;padding:44px;box-shadow:var(--shadow-1)}
+.quote-card blockquote{font-family:"Eudoxus Sans",sans-serif;font-weight:700;font-size:23px;line-height:1.35;letter-spacing:-0.01em;color:var(--ink)}
+.quote-card figcaption{margin-top:28px;display:flex;align-items:center;gap:14px}
+.q-av{width:46px;height:46px;border-radius:999px;background:linear-gradient(135deg,var(--accent),#7a2f8f);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px}
+.q-name{font-weight:700;font-size:15px;color:var(--ink)}
+.q-role{font-size:13px;color:var(--ink-faint)}
+
+/* process (hairline rows) */
+.proc{border-top:1px solid var(--rule)}
+.proc-row{display:grid;grid-template-columns:auto 1fr;gap:40px;align-items:baseline;
+  padding:36px 0 36px 8px;border-bottom:1px solid var(--rule);transition:padding-left .4s var(--ease)}
+.proc-row:hover{padding-left:24px}
+.proc-num{font-family:"Eudoxus Sans",sans-serif;font-weight:700;font-size:clamp(40px,5vw,68px);
+  line-height:.9;color:var(--ink-ghost);letter-spacing:-0.03em;transition:color .35s ease}
+.proc-row:hover .proc-num{color:var(--accent)}
+.proc-c h3{font-family:"Eudoxus Sans",sans-serif;font-weight:700;font-size:clamp(22px,2.4vw,30px);letter-spacing:-0.01em;color:var(--ink);margin-bottom:10px}
+.proc-c p{font-size:16px;line-height:1.55;color:var(--ink-soft);max-width:60ch}
+.proc-foot{margin-top:48px}
+
+/* clients */
+.logo-row{display:flex;align-items:center;gap:36px;flex-wrap:wrap;margin-top:8px}
+.logo-chip{font-family:var(--font-display);font-weight:800;font-size:22px;letter-spacing:-0.01em;color:var(--ink);opacity:.28;
+  transition:opacity .3s,transform .3s var(--ease)}
+.logo-chip:hover{opacity:.8;transform:translateY(-3px)}
+
+/* perks bento (services) */
+.perks{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:4px;overflow:hidden;margin-top:8px}
+.perk{position:relative;background:var(--surface);padding:40px 34px;min-height:280px;display:flex;flex-direction:column;transition:background .3s ease}
+.perk:hover{background:#fffdf7}
+.perk-corner{position:absolute;top:18px;right:18px;width:8px;height:8px;background:var(--accent)}
+.perk-idx{font-family:var(--font-mono);font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:auto}
+.perk h3{font-family:"Eudoxus Sans",sans-serif;font-weight:700;font-size:25px;letter-spacing:-0.01em;color:var(--ink);margin:60px 0 12px}
+.perk p{font-size:15px;line-height:1.55;color:var(--ink-soft)}
+.svc-foot{margin-top:34px;display:flex;gap:26px;flex-wrap:wrap;align-items:center;color:var(--ink-soft);font-size:15px}
+.svc-foot a{color:var(--accent);font-weight:600}
+
+/* faq */
+.faqs{border-top:1px solid var(--rule)}
+.faqs details{border-bottom:1px solid var(--rule)}
+.faqs summary{list-style:none;display:grid;grid-template-columns:auto 1fr auto;gap:24px;align-items:center;
+  padding:30px 0;transition:padding-left .35s var(--ease)}
+.faqs summary::-webkit-details-marker{display:none}
+.faqs details[open] summary,.faqs summary:hover{padding-left:8px}
+.faq-num{font-family:var(--font-mono);font-size:13px;color:var(--ink-ghost)}
+.faq-q{font-family:"Eudoxus Sans",sans-serif;font-weight:700;font-size:clamp(18px,2.1vw,23px);letter-spacing:-0.01em;color:var(--ink)}
+.faq-toggle{position:relative;width:22px;height:22px;flex-shrink:0}
+.faq-toggle::before,.faq-toggle::after{content:'';position:absolute;background:var(--ink);transition:transform .4s cubic-bezier(0.16,1,0.3,1)}
+.faq-toggle::before{top:10px;left:0;width:22px;height:2px}
+.faq-toggle::after{left:10px;top:0;width:2px;height:22px}
+.faqs details[open] .faq-toggle{}
+.faqs details[open] .faq-toggle::before,.faqs details[open] .faq-toggle::after{background:var(--accent)}
+.faqs details[open] .faq-toggle::after{transform:rotate(135deg) scaleY(0)}
+.faqs details[open] .faq-toggle::before{transform:rotate(135deg)}
+.faq-answer{overflow:hidden;max-height:0;transition:max-height .45s var(--ease)}
+.faq-answer p{padding:0 0 30px 46px;font-size:16px;line-height:1.65;color:var(--ink-soft);max-width:70ch}
+
+/* typewriter / final cta */
+#typewriter-cta{padding:160px 0;text-align:center}
+.tw-inner{display:flex;flex-direction:column;align-items:center;gap:40px}
+.tw-label{font-family:"Eudoxus Sans",sans-serif;font-size:11px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent)}
+.tw-headline{font-family:"Eudoxus Sans",sans-serif;font-weight:700;font-size:clamp(48px,7vw,100px);line-height:1.0;letter-spacing:-0.03em;color:var(--ink)}
+.tw-typed{background:var(--accent);color:#FBF7EC;padding:0 16px;display:inline-block}
+.tw-cursor{display:inline-block;width:3px;color:var(--accent);animation:tw-blink .75s step-end infinite;margin-left:2px;font-weight:300}
+@keyframes tw-blink{0%,100%{opacity:1}50%{opacity:0}}
+.tw-sub{font-family:var(--font-mono);font-size:13px;letter-spacing:0.06em;color:var(--ink-faint)}
+
+/* footer (dark anchor) */
+footer{background:#130316;color:#f2fbfd;padding:84px 0 44px}
+.footer-contact{display:flex;gap:80px;padding-bottom:56px;flex-wrap:wrap}
+.fc-label{font-size:13px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#f8f7fc;margin-bottom:10px}
+.fc-value{font-size:24px;font-weight:700;color:var(--accent);display:block;transition:opacity .2s ease}
+.fc-value:hover{opacity:.8}
+.footer-nav-row{display:flex;gap:80px;padding-bottom:44px;flex-wrap:wrap}
+.fnav h4{font-family:var(--font-mono);font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:rgba(242,251,253,0.4);margin-bottom:16px}
+.fnav a{display:block;font-size:14px;color:rgba(242,251,253,0.7);padding:5px 0;transition:color .2s ease}
+.fnav a:hover{color:var(--accent)}
+.footer-divider{border:none;border-top:1px solid #2e2e2e;margin:0 0 36px}
+.footer-bottom{display:flex;justify-content:space-between;flex-wrap:wrap;gap:18px;font-family:var(--font-mono);font-size:11px;letter-spacing:0.06em;color:#8c87a6}
+
+/* sandbox ribbon */
+.ribbon{position:fixed;bottom:16px;right:16px;z-index:9998;background:var(--dark-bg);color:#fff;font-family:var(--font-mono);
+  font-size:10px;letter-spacing:0.14em;text-transform:uppercase;padding:8px 14px;border-radius:999px;box-shadow:0 8px 24px rgba(0,0,0,0.3);opacity:.85}
+
+/* ================= MOTION LAYER ================= */
+/* parallax decorative shapes (one-accent discipline) */
+section{overflow:hidden}
+section .wrap,section .wrap-mid{position:relative;z-index:2}
+.pshape{position:absolute;pointer-events:none;z-index:0;will-change:transform}
+.pshape.ring{border:1.5px solid var(--accent);border-radius:50%;opacity:.18}
+.pshape.disc{border-radius:50%;background:radial-gradient(circle,var(--accent-tint),transparent 70%)}
+.pshape.sq{border:1.5px solid var(--ink-ghost);opacity:.55}
+
+/* clip-reveal headings (rise from a mask) */
+h2.display{display:block;overflow:hidden;padding-bottom:.08em}
+h2.display .ln{display:inline-block;transform:translateY(112%);transition:transform 1s cubic-bezier(0.76,0,0.24,1)}
+.reveal.in h2.display .ln{transform:none}
+
+/* hero dolly layer (scroll-scrubbed slow zoom) */
+.hero-bg{position:absolute;inset:-6%;z-index:0;will-change:transform;
+  background:#c6cfd8 url('./media/satin-bg-blue.png') center center / cover no-repeat}
+
+/* floating product chips (P5 collage depth) */
+.hero-chip{position:absolute;z-index:6;display:inline-flex;align-items:center;gap:9px;padding:11px 16px;border-radius:14px;
+  background:rgba(255,255,255,0.55);-webkit-backdrop-filter:blur(14px) saturate(140%);backdrop-filter:blur(14px) saturate(140%);
+  border:1px solid rgba(255,255,255,0.7);box-shadow:0 14px 34px rgba(8,6,20,0.30);
+  color:var(--ink);font-size:13px;font-weight:600;letter-spacing:0.01em;white-space:nowrap;will-change:transform}
+.hero-chip .ico{width:9px;height:9px;border-radius:50%;background:var(--teal);box-shadow:0 0 10px rgba(85,202,164,0.8)}
+.hero-chip.pink .ico{background:var(--accent);box-shadow:0 0 10px rgba(235,46,107,0.8)}
+.hero-chip.c1{top:6%;left:-8%;animation:floatChip 5.5s ease-in-out infinite}
+.hero-chip.c2{bottom:14%;right:-6%;animation:floatChip 6.6s ease-in-out infinite reverse}
+@keyframes floatChip{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+
+/* held chapter word (P3 breath) */
+.chapter{height:200vh;position:relative;background:var(--paper)}
+.chapter-pin{position:sticky;top:0;height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.chapter-eyebrow{position:absolute;top:14%;left:50%;transform:translateX(-50%);font-family:var(--font-mono);
+  font-size:11px;letter-spacing:0.3em;text-transform:uppercase;color:var(--ink-faint)}
+.chapter-word{font-family:var(--font-display);font-weight:800;font-size:clamp(64px,17vw,260px);
+  letter-spacing:-0.04em;color:var(--ink);line-height:.86;text-align:center;will-change:transform,opacity}
+.chapter-word span{color:var(--accent)}
+
+@media (max-width:980px){
+  .hero-chip{display:none}
+  .chapter{height:auto}
+  .chapter-pin{position:static;height:auto;padding:96px 0}
+}
+
+/* ---------- responsive ---------- */
+@media (max-width:980px){
+  .hero-inner{grid-template-columns:1fr;gap:36px;padding:120px 22px 70px;justify-items:center;text-align:center}
+  .hero-copy{text-align:center}
+  .hero h1{max-width:none}
+  .hero .kicker,.hero-cta-row{justify-content:center}
+  .hero-show{order:2;margin-top:8px}
+  .device{transform:scale(.92);transform-origin:top center}
+  .team-grid{grid-template-columns:1fr;gap:40px}
+  .velo-grid{grid-template-columns:1fr;gap:28px;align-items:start}
+  .perks{grid-template-columns:1fr}
+  section{padding:96px 0}
+}
+@media (max-width:900px){ .nav-links{display:none} }
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  .reveal{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+
+<div class="grain" aria-hidden="true"></div>
+<div class="cur-dot" id="curDot" aria-hidden="true"></div>
+<div class="cur-ring" id="curRing" aria-hidden="true"></div>
+
+<!-- ===================== NAV ===================== -->
+<nav class="nav" id="nav">
+  <div class="wrap">
+    <a class="brand" href="#top">CODE<span class="plus">/+/</span>TRUST</a>
+    <div class="nav-links">
+      <a href="#team">About</a>
+      <a href="#process">Our Process</a>
+      <a href="#services">Services</a>
+      <a href="#clients">Clients</a>
+      <a href="#">Events</a>
+      <a href="#">Careers</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <a class="nav-cta magnetic" href="#contact">Get in touch →</a>
+  </div>
+</nav>
+
+<!-- ===================== HERO (kept) ===================== -->
+<header class="hero" id="top">
+  <div class="hero-bg" id="heroBg"></div>
+  <div class="scrim"></div>
+  <div class="vignette"></div>
+  <div class="hero-grain"></div>
+  <div class="hero-inner">
+    <div class="hero-copy">
+      <span class="kicker"><span class="dot"></span> AI Implementation &amp; Custom Software</span>
+      <h1>Your Business Runs on Software Built Before AI Existed. <span class="accent">Let's Fix That.</span></h1>
+      <p class="sub">We help you implement AI to cut costs, replace aging software, and ship smarter workflows. And we build AI-native products for the founders doing it first.</p>
+      <div class="hero-cta-row">
+        <a class="hbtn hbtn-primary magnetic" href="#contact">Get in touch →</a>
+        <a class="hbtn hbtn-ghost magnetic" href="#clients">See our work →</a>
+      </div>
+      <div class="phone">(843) 619-7834</div>
+    </div>
+    <div class="hero-show" id="heroShow">
+      <div class="hero-chip c1 pink" data-chip="0.5"><span class="ico"></span> ROI in 90 days</div>
+      <div class="hero-chip c2" data-chip="0.8"><span class="ico"></span> Shipped in 2 weeks</div>
+      <div class="device">
+        <div class="device-glow"></div>
+        <div class="device-screen">
+          <iframe src="./bs/app.html" title="Product demo" scrolling="no" loading="lazy"></iframe>
+        </div>
+        <div class="device-notch"></div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-hint"><span>Scroll</span><span class="line"></span></div>
+</header>
+
+<!-- ===================== No 01 VELOCITY ===================== -->
+<section class="reveal">
+  <span class="pshape ring" data-parallax="0.18" data-rot="40" style="width:340px;height:340px;top:-120px;right:-60px"></span>
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow"><span class="eyebrow-num">No 01</span> Velocity</div>
+      <h2 class="display"><span class="ln">Need to move <em>faster?</em></span></h2>
+    </div>
+    <div class="velo-grid">
+      <p class="lead-p">VeloCT is our AI-accelerated sprint product. We scope your problem and ship a working build in weeks, not quarters.</p>
+      <a class="btn btn-ghost magnetic" href="#contact"><span>Learn more about VeloCT</span><span class="btn-arrow">→</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== No 02 THE TEAM ===================== -->
+<section class="alt reveal" id="team">
+  <span class="pshape disc" data-parallax="0.30" style="width:520px;height:520px;top:-150px;right:-170px"></span>
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow"><span class="eyebrow-num">No 02</span> The Team</div>
+      <h2 class="display"><span class="ln">Created by tech <em>entrepreneurs.</em></span></h2>
+    </div>
+    <div class="team-grid">
+      <div>
+        <div class="wordmark2">CODE <span>/+/</span> TRUST</div>
+        <p class="body-lg">It's right in the name. Fully in-house, onshore, senior US-based teams. We've built and run products, not just billed for them. 40+ years of it.</p>
+        <div class="stat-row">
+          <div><div class="stat-n">40+</div><div class="stat-l">Years building and operating</div></div>
+          <div><div class="stat-n">90d</div><div class="stat-l">To measurable ROI</div></div>
+          <div><div class="stat-n">100%</div><div class="stat-l">In-house and onshore</div></div>
+        </div>
+      </div>
+      <figure class="quote-card">
+        <blockquote>"Our process helps you not just in the short term, but also sets you up for long term success and growth."</blockquote>
+        <figcaption>
+          <span class="q-av">AS</span>
+          <span><span class="q-name">Andrew Strickland</span><br><span class="q-role">CEO &amp; Co-Founder</span></span>
+        </figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== No 03 OUR PROCESS ===================== -->
+<section class="reveal" id="process">
+  <span class="pshape sq" data-parallax="0.22" data-rot="-32" style="width:200px;height:200px;bottom:80px;left:-70px"></span>
+  <div class="wrap-mid">
+    <div class="section-head">
+      <div class="eyebrow"><span class="eyebrow-num">No 03</span> Our Process</div>
+      <h2 class="display"><span class="ln">The same team, from <em>sprint to scale.</em></span></h2>
+    </div>
+    <div class="proc">
+      <div class="proc-row"><span class="proc-num">01</span><div class="proc-c"><h3>AI-Accelerated Sprints</h3><p>Sometimes you don't need a six-month engagement. You need an answer in two weeks. We scope one real problem and apply AI where it moves the needle. Same team, same standards.</p></div></div>
+      <div class="proc-row"><span class="proc-num">02</span><div class="proc-c"><h3>Product Design</h3><p>This is where it gets real. We bring your idea to life with interactive prototypes that look and feel like the shipped product, then we build it.</p></div></div>
+      <div class="proc-row"><span class="proc-num">03</span><div class="proc-c"><h3>MVP Development</h3><p>Minimum core features, real market validation. We ship the least code needed to get your product in users' hands, then let the data guide the next push.</p></div></div>
+      <div class="proc-row"><span class="proc-num">04</span><div class="proc-c"><h3>Continued Partnership</h3><p>Markets change. Static requirement docs don't keep up. The same people who built it stay on to grow it with you, no bait-and-switch staffing.</p></div></div>
+    </div>
+    <div class="proc-foot"><a class="btn btn-ghost magnetic" href="#"><span>See our process</span><span class="btn-arrow">→</span></a></div>
+  </div>
+</section>
+
+<!-- ===================== No 04 CLIENTS ===================== -->
+<section class="alt reveal" id="clients">
+  <div class="wrap">
+    <div class="section-head" style="margin-bottom:48px">
+      <div class="eyebrow"><span class="eyebrow-num">No 04</span> Clients</div>
+      <h2 class="display"><span class="ln">Work we've <em>shipped.</em></span></h2>
+    </div>
+    <div class="logo-row">
+      <span class="logo-chip">Northwind</span>
+      <span class="logo-chip">Lumen</span>
+      <span class="logo-chip">Vantage</span>
+      <span class="logo-chip">Harbor Co</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== HELD CHAPTER WORD (P3) ===================== -->
+<div class="chapter" id="chapter">
+  <div class="chapter-pin">
+    <div class="chapter-eyebrow">What we build</div>
+    <h2 class="chapter-word" id="chapterWord">AI<span>-</span>native<span>.</span></h2>
+  </div>
+</div>
+
+<!-- ===================== No 05 AI SERVICES ===================== -->
+<section class="reveal" id="services">
+  <span class="pshape ring" data-parallax="0.26" data-rot="48" style="width:440px;height:440px;bottom:-180px;left:-130px"></span>
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow"><span class="eyebrow-num">No 05</span> AI Services</div>
+      <h2 class="display"><span class="ln">AI software for <em>real workflows.</em></span></h2>
+      <p class="head-sub">We build AI software that replaces specific manual steps in your operations. Not demos, not experiments. LLM pipelines, RAG systems over your proprietary data, and AI-native product builds. Fixed-price. Measurable ROI in 90 days.</p>
+    </div>
+    <div class="perks">
+      <article class="perk"><span class="perk-corner"></span><div class="perk-idx">01 / LLM</div><h3>LLM Pipeline Automation</h3><p>Document processing, classification, data extraction. Replacing the forms your team currently fills out by hand.</p></article>
+      <article class="perk"><span class="perk-corner"></span><div class="perk-idx">02 / RAG</div><h3>RAG Systems Over Your Data</h3><p>AI that reasons over your proprietary documents, policy library, and historical records. Not just training data.</p></article>
+      <article class="perk"><span class="perk-corner"></span><div class="perk-idx">03 / FLOW</div><h3>AI Workflow Automation</h3><p>Connect your existing tools through AI-powered pipelines that eliminate manual data entry between systems.</p></article>
+    </div>
+    <div class="svc-foot">
+      <a href="#">See all AI software development services →</a>
+      <span>Building for phones too? See our <a href="#">mobile app development</a> services.</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== No 06 ANSWERS ===================== -->
+<section class="alt reveal" id="faq">
+  <span class="pshape disc" data-parallax="0.32" style="width:500px;height:500px;top:-140px;left:-150px"></span>
+  <div class="wrap-mid">
+    <div class="section-head">
+      <div class="eyebrow"><span class="eyebrow-num">No 06</span> Answers</div>
+      <h2 class="display"><span class="ln">Frequently asked <em>questions.</em></span></h2>
+    </div>
+    <div class="faqs">
+      <details>
+        <summary><span class="faq-num">01</span><span class="faq-q">How long does a custom software project take?</span><span class="faq-toggle"></span></summary>
+        <div class="faq-answer"><p>Most projects move through Product Design, MVP Development, and Continued Partnership phases. An MVP typically takes 8 to 16 weeks from kickoff. We deliver a working prototype early so you can validate the approach before committing to full build-out.</p></div>
+      </details>
+      <details>
+        <summary><span class="faq-num">02</span><span class="faq-q">What industries does Code and Trust work with?</span><span class="faq-toggle"></span></summary>
+        <div class="faq-answer"><p>We work across healthcare, fintech, manufacturing, logistics, and SaaS. Our team brings 40+ years of tech entrepreneurial experience. We know your domain before we write the first line of code.</p></div>
+      </details>
+      <details>
+        <summary><span class="faq-num">03</span><span class="faq-q">What is VeloCT?</span><span class="faq-toggle"></span></summary>
+        <div class="faq-answer"><p>VeloCT is our AI-accelerated sprint offering. Same team, same standards, radically compressed timeline. When you need an answer in two weeks instead of six months, VeloCT scopes the problem and applies AI where it moves the needle.</p></div>
+      </details>
+      <details>
+        <summary><span class="faq-num">04</span><span class="faq-q">How is Code and Trust different from a typical software agency?</span><span class="faq-toggle"></span></summary>
+        <div class="faq-answer"><p>We're a fully in-house, onshore team built by tech entrepreneurs who have founded and operated software businesses. We care about your product, your customers, and your runway, not just sprint velocity.</p></div>
+      </details>
+      <details>
+        <summary><span class="faq-num">05</span><span class="faq-q">Where is Code and Trust located?</span><span class="faq-toggle"></span></summary>
+        <div class="faq-answer"><p>Code and Trust operates from Mt Pleasant, SC, serving clients across the United States.</p></div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== No 07 TYPEWRITER / NEXT STEP ===================== -->
+<section id="typewriter-cta" class="reveal">
+  <div class="wrap tw-inner">
+    <span class="tw-label">No 07 / Next step</span>
+    <h2 class="tw-headline">We <span class="tw-typed">build</span><span class="tw-cursor">_</span> Cool $#!+</h2>
+    <a class="btn btn-fill magnetic" href="mailto:hello@codeandtrust.com"><span>Get in touch</span><span class="btn-arrow">→</span></a>
+    <p class="tw-sub">hello@codeandtrust.com  ·  (843) 619-7834</p>
+  </div>
+</section>
+
+<!-- ===================== FOOTER ===================== -->
+<footer id="contact">
+  <div class="wrap">
+    <div class="footer-contact">
+      <div><div class="fc-label">Get in touch</div><a class="fc-value" href="mailto:hello@codeandtrust.com">hello@codeandtrust.com</a></div>
+      <div><div class="fc-label">Call us</div><a class="fc-value" href="tel:+18436197834">(843) 619-7834</a></div>
+    </div>
+    <div class="footer-nav-row">
+      <div class="fnav"><h4>Company</h4><a href="#">Get a Proposal</a><a href="#">Custom Software</a><a href="#">AI Implementation</a><a href="#">Enterprise Consulting</a></div>
+      <div class="fnav"><h4>Resources</h4><a href="#">Glossary</a><a href="#">AI Audit</a><a href="#">AI Readiness Quiz</a><a href="#">ROI Calculator</a></div>
+      <div class="fnav"><h4>More</h4><a href="#">VeloCT Sprints</a><a href="#">Build vs. Buy</a><a href="#">Industries</a><a href="#">Security</a></div>
+    </div>
+    <hr class="footer-divider" />
+    <div class="footer-bottom">
+      <span>© 2026 Code and Trust LLC. All rights reserved.</span>
+      <span>Mt Pleasant, SC</span>
+    </div>
+  </div>
+</footer>
+
+<div class="ribbon">Sandbox · claude-mp4</div>
+
+<script>
+/* ---------- custom cursor (dot + lerp ring) ---------- */
+(function(){
+  if(!window.matchMedia || !matchMedia('(pointer:fine)').matches) return;
+  const dot=document.getElementById('curDot'), ring=document.getElementById('curRing');
+  let cx=innerWidth/2, cy=innerHeight/2, rx=cx, ry=cy;
+  const LERP=0.13;
+  addEventListener('mousemove',e=>{cx=e.clientX;cy=e.clientY;dot.style.transform=`translate(${cx}px,${cy}px)`;});
+  (function loop(){rx+=(cx-rx)*LERP;ry+=(cy-ry)*LERP;ring.style.transform=`translate(${rx}px,${ry}px)`;requestAnimationFrame(loop);})();
+  document.querySelectorAll('a,button,summary,.magnetic').forEach(el=>{
+    el.addEventListener('mouseenter',()=>{ring.classList.add('is-hot');dot.style.opacity='0';});
+    el.addEventListener('mouseleave',()=>{ring.classList.remove('is-hot');dot.style.opacity='1';});
+  });
+})();
+
+/* ---------- nav scroll state ---------- */
+const nav=document.getElementById('nav');
+addEventListener('scroll',()=>nav.classList.toggle('is-scrolled',scrollY>80),{passive:true});
+
+/* ---------- scroll reveal ---------- */
+const io=new IntersectionObserver((es)=>{
+  es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });
+},{threshold:0.12,rootMargin:'0px 0px -8% 0px'});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+/* ---------- magnetic buttons (conversion actions) ---------- */
+(function(){
+  if(!matchMedia('(pointer:fine)').matches) return;
+  const items=[...document.querySelectorAll('.magnetic')];
+  document.addEventListener('mousemove',e=>{
+    items.forEach(el=>{
+      const r=el.getBoundingClientRect();
+      const dx=e.clientX-(r.left+r.width/2), dy=e.clientY-(r.top+r.height/2);
+      const d=Math.hypot(dx,dy);
+      if(d<110){ const p=(1-d/110)*0.4; el.style.transform=`translate(${dx*p}px,${dy*p}px)`; }
+      else { el.style.transform=''; }
+    });
+  },{passive:true});
+})();
+
+/* ---------- FAQ single-open accordion ---------- */
+document.querySelectorAll('.faqs details').forEach(d=>{
+  const ans=d.querySelector('.faq-answer');
+  d.addEventListener('toggle',()=>{
+    if(d.open){
+      document.querySelectorAll('.faqs details[open]').forEach(o=>{ if(o!==d){o.open=false;o.querySelector('.faq-answer').style.maxHeight='0';} });
+      ans.style.maxHeight=ans.scrollHeight+'px';
+    } else { ans.style.maxHeight='0'; }
+  });
+});
+
+/* ---------- typewriter CTA ---------- */
+(function(){
+  const el=document.querySelector('.tw-typed');
+  if(!el) return;
+  const words=['design','engineer','develop','build','create'];
+  let wi=0,ci=0,deleting=false;
+  const HOLD=1800,TYPE=225,DEL=120;
+  function tick(){
+    const w=words[wi];
+    if(!deleting){ el.textContent=w.slice(0,++ci); if(ci===w.length){deleting=true;setTimeout(tick,HOLD);return;} }
+    else { el.textContent=w.slice(0,--ci); if(ci===0){deleting=false;wi=(wi+1)%words.length;} }
+    setTimeout(tick,deleting?DEL:TYPE);
+  }
+  setTimeout(tick,800);
+})();
+
+/* ================= MOTION LAYER (GSAP ScrollTrigger scrub, native scroll) ================= */
+(function(){
+  const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(RM || !window.gsap || !window.ScrollTrigger) return;
+  gsap.registerPlugin(ScrollTrigger);
+
+  /* parallax decorative shapes: scrub vertically + slow rotate (one-accent depth) */
+  document.querySelectorAll('[data-parallax]').forEach(el=>{
+    const sp = parseFloat(el.dataset.parallax)||0.3, rot = parseFloat(el.dataset.rot)||0;
+    gsap.to(el,{ yPercent:-sp*100, rotation:rot, ease:'none',
+      scrollTrigger:{ trigger:el.closest('section'), start:'top bottom', end:'bottom top', scrub:1.2 } });
+  });
+
+  /* hero: slow satin dolly-in + phone-column parallax (cinematic depth) */
+  const bg = document.getElementById('heroBg');
+  if(bg) gsap.fromTo(bg,{scale:1},{ scale:1.16, ease:'none',
+    scrollTrigger:{ trigger:'.hero', start:'top top', end:'bottom top', scrub:true } });
+  const show = document.getElementById('heroShow');
+  if(show) gsap.to(show,{ yPercent:-12, ease:'none',
+    scrollTrigger:{ trigger:'.hero', start:'top top', end:'bottom top', scrub:1 } });
+
+  /* staggered grid reveals (a system assembling itself) */
+  if(document.querySelector('.perks')) gsap.from('.perks .perk',{ opacity:0, y:44, duration:.7, ease:'expo.out', stagger:0.1,
+    scrollTrigger:{ trigger:'.perks', start:'top 84%' } });
+  if(document.querySelector('.proc')) gsap.from('.proc-row',{ opacity:0, y:30, duration:.7, ease:'expo.out', stagger:0.09,
+    scrollTrigger:{ trigger:'.proc', start:'top 84%' } });
+
+  /* held chapter word: scale in, hold, then scale through and dissolve (P3) */
+  const cw = document.getElementById('chapterWord');
+  if(cw){
+    gsap.timeline({ scrollTrigger:{ trigger:'#chapter', start:'top top', end:'bottom bottom', scrub:true } })
+      .fromTo(cw,{ scale:0.82, opacity:0 },{ scale:1, opacity:1, ease:'power2.out', duration:0.38 })
+      .to(cw,{ scale:1, opacity:1, duration:0.24 })
+      .to(cw,{ scale:1.14, opacity:0, ease:'power2.in', duration:0.38 });
+  }
+
+  window.addEventListener('load', ()=>ScrollTrigger.refresh());
+  setTimeout(()=>ScrollTrigger.refresh(), 1200);
+})();
+</script>
+</body>
+</html>

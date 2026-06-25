@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Product demo</title>
+<style>
+:root{
+  --ink:#141125; --ink2:#4a314f; --muted:#8a83a0;
+  --pink:#EB2E6B; --green:#0A7D17; --mist:#F4EEF6; --line:#ece8f1;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#fff}
+body{font-family:var(--font);color:var(--ink)}
+.app{width:390px;min-height:844px;background:#fff;position:relative;padding:64px 26px 30px}
+.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:30px}
+.brand{font-weight:800;font-size:15px;letter-spacing:-0.01em}
+.brand .p{color:var(--pink)}
+.bell{width:34px;height:34px;border-radius:50%;background:var(--mist);display:flex;align-items:center;justify-content:center;font-size:15px}
+.eyebrow{font-size:13px;font-weight:600;color:var(--pink);margin-bottom:6px}
+.h1{font-size:30px;font-weight:800;letter-spacing:-0.02em;line-height:1.05;margin-bottom:24px}
+.badge{display:inline-flex;align-items:baseline;gap:8px;background:var(--pink);color:#fff;border-radius:14px;padding:14px 22px;margin-bottom:22px;
+  box-shadow:0 12px 26px rgba(235,46,107,0.32)}
+.badge b{font-size:30px;font-weight:800;letter-spacing:-0.01em}
+.badge span{font-size:15px;font-weight:600;opacity:.95}
+.row{display:flex;align-items:center;gap:11px;color:var(--ink2);font-size:16px;font-weight:600;margin-bottom:22px}
+.row .ic{width:22px;height:22px;border-radius:50%;background:var(--mist);display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--pink)}
+.hr{height:1px;background:var(--line);margin:4px 0 22px}
+.tech{display:flex;align-items:center;gap:14px;margin-bottom:26px}
+.av{width:48px;height:48px;border-radius:50%;background:#efe7f3;color:var(--pink);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px}
+.tech .lbl{font-size:13px;color:var(--pink);font-weight:600}
+.tech .nm{font-size:19px;font-weight:800;letter-spacing:-0.01em}
+.steps{display:flex;align-items:flex-start;justify-content:space-between;margin:6px 4px 18px;position:relative}
+.steps::before{content:"";position:absolute;top:13px;left:24px;right:24px;height:3px;background:var(--line);border-radius:2px;z-index:0}
+.steps::after{content:"";position:absolute;top:13px;left:24px;width:42%;height:3px;background:var(--green);border-radius:2px;z-index:1}
+.step{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:8px;width:33%}
+.dot{width:28px;height:28px;border-radius:50%;background:#fff;border:3px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff}
+.step.done .dot{background:var(--green);border-color:var(--green)}
+.step.active .dot{background:var(--pink);border-color:var(--pink);box-shadow:0 0 0 0 rgba(235,46,107,.5);animation:pulse 2.2s ease-out infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(235,46,107,.5)}70%{box-shadow:0 0 0 12px rgba(235,46,107,0)}100%{box-shadow:0 0 0 0 rgba(235,46,107,0)}}
+.step .t{font-size:12.5px;font-weight:600;color:var(--ink2);text-align:center;line-height:1.2}
+.note{color:var(--green);font-weight:700;font-size:16px;text-align:center;margin:8px 0 24px}
+.cta{display:flex;align-items:center;justify-content:center;gap:10px;border:1.5px solid var(--ink);border-radius:999px;padding:16px;font-weight:700;font-size:16px;color:var(--ink)}
+.cta .i{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--ink);display:flex;align-items:center;justify-content:center;font-size:12px}
+.fade{animation:fade .6s ease both}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top">
+    <div class="brand">Code<span class="p">/+/</span>Trust</div>
+    <div class="bell">🔔</div>
+  </div>
+  <div class="fade">
+    <div class="eyebrow">Your appointment is confirmed</div>
+    <div class="h1">Expected Arrival</div>
+    <div class="badge"><b>3-5</b><span>PM Today</span></div>
+    <div class="row"><span class="ic">◎</span> 125 Maple Street, Riverton</div>
+    <div class="hr"></div>
+    <div class="tech">
+      <div class="av">SR</div>
+      <div><div class="lbl">Your specialist</div><div class="nm">Sam Rivera</div></div>
+    </div>
+    <div class="steps">
+      <div class="step done"><div class="dot">✓</div><div class="t">Getting ready</div></div>
+      <div class="step active"><div class="dot">●</div><div class="t">On route</div></div>
+      <div class="step"><div class="dot"></div><div class="t">Arriving</div></div>
+    </div>
+    <div class="note">Sam is on the way to you</div>
+    <div class="cta"><span class="i">i</span> What to expect during setup</div>
+  </div>
+</div>
+</body>
+</html>
