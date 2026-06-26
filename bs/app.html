@@ -7,70 +7,180 @@
 <style>
 :root{
   --ink:#141125; --ink2:#4a314f; --muted:#8a83a0;
-  --pink:#EB2E6B; --green:#0A7D17; --mist:#F4EEF6; --line:#ece8f1;
+  --pink:#EB2E6B; --pink-soft:#fdeaf1; --green:#0A7D17; --green-soft:#e6f4e8;
+  --mist:#F4EEF6; --line:#ece8f1; --tan:#FBF7EC;
   --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{background:#fff}
-body{font-family:var(--font);color:var(--ink)}
-.app{width:390px;min-height:844px;background:#fff;position:relative;padding:64px 26px 30px}
-.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:30px}
-.brand{font-weight:800;font-size:15px;letter-spacing:-0.01em}
-.brand .p{color:var(--pink)}
-.bell{width:34px;height:34px;border-radius:50%;background:var(--mist);display:flex;align-items:center;justify-content:center;font-size:15px}
-.eyebrow{font-size:13px;font-weight:600;color:var(--pink);margin-bottom:6px}
-.h1{font-size:30px;font-weight:800;letter-spacing:-0.02em;line-height:1.05;margin-bottom:24px}
-.badge{display:inline-flex;align-items:baseline;gap:8px;background:var(--pink);color:#fff;border-radius:14px;padding:14px 22px;margin-bottom:22px;
-  box-shadow:0 12px 26px rgba(235,46,107,0.32)}
-.badge b{font-size:30px;font-weight:800;letter-spacing:-0.01em}
-.badge span{font-size:15px;font-weight:600;opacity:.95}
-.row{display:flex;align-items:center;gap:11px;color:var(--ink2);font-size:16px;font-weight:600;margin-bottom:22px}
-.row .ic{width:22px;height:22px;border-radius:50%;background:var(--mist);display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--pink)}
-.hr{height:1px;background:var(--line);margin:4px 0 22px}
-.tech{display:flex;align-items:center;gap:14px;margin-bottom:26px}
-.av{width:48px;height:48px;border-radius:50%;background:#efe7f3;color:var(--pink);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px}
-.tech .lbl{font-size:13px;color:var(--pink);font-weight:600}
-.tech .nm{font-size:19px;font-weight:800;letter-spacing:-0.01em}
-.steps{display:flex;align-items:flex-start;justify-content:space-between;margin:6px 4px 18px;position:relative}
-.steps::before{content:"";position:absolute;top:13px;left:24px;right:24px;height:3px;background:var(--line);border-radius:2px;z-index:0}
-.steps::after{content:"";position:absolute;top:13px;left:24px;width:42%;height:3px;background:var(--green);border-radius:2px;z-index:1}
-.step{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:8px;width:33%}
-.dot{width:28px;height:28px;border-radius:50%;background:#fff;border:3px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff}
-.step.done .dot{background:var(--green);border-color:var(--green)}
-.step.active .dot{background:var(--pink);border-color:var(--pink);box-shadow:0 0 0 0 rgba(235,46,107,.5);animation:pulse 2.2s ease-out infinite}
-@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(235,46,107,.5)}70%{box-shadow:0 0 0 12px rgba(235,46,107,0)}100%{box-shadow:0 0 0 0 rgba(235,46,107,0)}}
-.step .t{font-size:12.5px;font-weight:600;color:var(--ink2);text-align:center;line-height:1.2}
-.note{color:var(--green);font-weight:700;font-size:16px;text-align:center;margin:8px 0 24px}
-.cta{display:flex;align-items:center;justify-content:center;gap:10px;border:1.5px solid var(--ink);border-radius:999px;padding:16px;font-weight:700;font-size:16px;color:var(--ink)}
-.cta .i{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--ink);display:flex;align-items:center;justify-content:center;font-size:12px}
-.fade{animation:fade .6s ease both}
-@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+html,body{width:390px;height:844px;overflow:hidden;background:#fff;font-family:var(--font);color:var(--ink)}
+.app{position:relative;width:390px;height:844px;background:#fff;overflow:hidden}
+
+/* top brand bar (consistent across screens) */
+.bar{position:absolute;top:0;left:0;right:0;height:96px;display:flex;align-items:flex-end;justify-content:space-between;
+  padding:0 26px 14px;z-index:20;background:linear-gradient(#fff 70%,rgba(255,255,255,0))}
+.brand{display:flex;align-items:center;gap:9px;font-weight:800;font-size:16px;letter-spacing:-0.01em}
+.brand .mark{width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,var(--pink),#7a2f8f);
+  display:flex;align-items:center;justify-content:center}
+.brand .mark::before{content:"";width:10px;height:10px;border-radius:50%;border:2.5px solid #fff;border-right-color:transparent;transform:rotate(-45deg)}
+.bar .menu{width:34px;height:34px;border-radius:50%;background:var(--mist);display:flex;align-items:center;justify-content:center;color:var(--ink2);font-size:16px}
+
+/* carousel */
+.track{position:absolute;top:0;left:0;display:flex;width:400%;height:844px;
+  transition:transform .65s cubic-bezier(0.76,0,0.24,1)}
+.screen{flex:0 0 25%;width:390px;height:844px;padding:108px 26px 40px;position:relative}
+.screen .inner>*{opacity:0;transform:translateY(14px)}
+.screen.active .inner>*{animation:rise .55s cubic-bezier(0.16,1,0.3,1) forwards}
+.screen.active .inner>*:nth-child(2){animation-delay:.06s}
+.screen.active .inner>*:nth-child(3){animation-delay:.12s}
+.screen.active .inner>*:nth-child(4){animation-delay:.18s}
+.screen.active .inner>*:nth-child(5){animation-delay:.24s}
+@keyframes rise{to{opacity:1;transform:none}}
+
+.eyebrow{font-size:13px;font-weight:700;letter-spacing:0.02em;margin-bottom:8px}
+.eyebrow.pink{color:var(--pink)} .eyebrow.green{color:var(--green)}
+.h1{font-size:31px;font-weight:800;letter-spacing:-0.025em;line-height:1.04;margin-bottom:26px}
+
+.card{background:var(--tan);border:1px solid var(--line);border-radius:18px;padding:20px 22px;margin-bottom:18px}
+.card.pink{background:var(--pink);border-color:var(--pink);color:#fff;box-shadow:0 16px 34px rgba(235,46,107,0.30)}
+.card .k{font-size:13px;font-weight:600;opacity:.8;margin-bottom:4px}
+.card .v{font-size:24px;font-weight:800;letter-spacing:-0.01em}
+.row{display:flex;align-items:center;gap:12px;color:var(--ink2);font-size:16px;font-weight:600;margin-bottom:18px}
+.row .ic{width:34px;height:34px;border-radius:10px;background:var(--mist);display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--pink);flex-shrink:0}
+
+/* hero icon (check / clock / etc.) */
+.hero-ic{width:96px;height:96px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:6px auto 26px;font-size:44px}
+.hero-ic.pink{background:var(--pink-soft);color:var(--pink)}
+.hero-ic.green{background:var(--green-soft);color:var(--green)}
+.center{text-align:center}
+
+/* specialist */
+.spec{display:flex;align-items:center;gap:14px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px 18px;margin-bottom:20px}
+.spec .av{width:48px;height:48px;border-radius:50%;background:#efe7f3;color:var(--pink);display:flex;align-items:center;justify-content:center;font-weight:800}
+.spec .nm{font-size:18px;font-weight:800;letter-spacing:-0.01em}
+.spec .st{font-size:13px;color:var(--muted);font-weight:600}
+.spec .stars{margin-left:auto;color:#f5b301;font-size:14px;letter-spacing:1px}
+
+/* timeline */
+.tl{display:flex;align-items:flex-start;justify-content:space-between;position:relative;margin:8px 4px 22px}
+.tl::before{content:"";position:absolute;top:13px;left:22px;right:22px;height:3px;background:var(--line);border-radius:2px}
+.tl::after{content:"";position:absolute;top:13px;left:22px;width:44%;height:3px;background:var(--green);border-radius:2px}
+.tl .s{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:8px;width:33%}
+.tl .d{width:28px;height:28px;border-radius:50%;background:#fff;border:3px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff}
+.tl .s.done .d{background:var(--green);border-color:var(--green)}
+.tl .s.now .d{background:var(--pink);border-color:var(--pink);animation:pulse 2s ease-out infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(235,46,107,.5)}70%{box-shadow:0 0 0 11px rgba(235,46,107,0)}100%{box-shadow:0 0 0 0 rgba(235,46,107,0)}}
+.tl .t{font-size:12.5px;font-weight:600;color:var(--ink2);text-align:center}
+
+/* progress ring */
+.ring{width:150px;height:150px;margin:6px auto 22px;border-radius:50%;
+  background:conic-gradient(var(--pink) 0 68%, var(--mist) 68% 100%);display:flex;align-items:center;justify-content:center}
+.ring .hole{width:112px;height:112px;border-radius:50%;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring .pct{font-size:34px;font-weight:800;letter-spacing:-0.02em}
+.ring .lbl{font-size:12px;color:var(--muted);font-weight:600}
+.check-list{list-style:none}
+.check-list li{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--line);font-size:16px;font-weight:600;color:var(--ink2)}
+.check-list li .b{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.check-list li.done .b{background:var(--green);color:#fff}
+.check-list li.now .b{background:var(--pink);color:#fff;animation:pulse 2s ease-out infinite}
+.check-list li.todo{color:var(--muted)}
+.check-list li.todo .b{background:var(--mist)}
+
+/* stars rating */
+.stars-big{display:flex;justify-content:center;gap:10px;font-size:38px;color:#f5b301;margin-bottom:26px}
+.stars-big .off{color:var(--line)}
+.btn{display:block;text-align:center;background:var(--pink);color:#fff;border-radius:999px;padding:17px;font-weight:700;font-size:16px;
+  box-shadow:0 14px 30px rgba(235,46,107,0.32)}
+.sub{text-align:center;color:var(--muted);font-size:14.5px;font-weight:600;margin-top:16px;line-height:1.5}
+
+/* dots */
+.dots{position:absolute;bottom:20px;left:0;right:0;display:flex;justify-content:center;gap:7px;z-index:20}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--line);transition:width .3s,background .3s}
+.dot.on{width:22px;background:var(--pink)}
 </style>
 </head>
 <body>
 <div class="app">
-  <div class="top">
-    <div class="brand">Code<span class="p">/+/</span>Trust</div>
-    <div class="bell">🔔</div>
+  <div class="bar">
+    <div class="brand"><span class="mark"></span> Beacon</div>
+    <div class="menu">≡</div>
   </div>
-  <div class="fade">
-    <div class="eyebrow">Your appointment is confirmed</div>
-    <div class="h1">Expected Arrival</div>
-    <div class="badge"><b>3-5</b><span>PM Today</span></div>
-    <div class="row"><span class="ic">◎</span> 125 Maple Street, Riverton</div>
-    <div class="hr"></div>
-    <div class="tech">
-      <div class="av">SR</div>
-      <div><div class="lbl">Your specialist</div><div class="nm">Sam Rivera</div></div>
-    </div>
-    <div class="steps">
-      <div class="step done"><div class="dot">✓</div><div class="t">Getting ready</div></div>
-      <div class="step active"><div class="dot">●</div><div class="t">On route</div></div>
-      <div class="step"><div class="dot"></div><div class="t">Arriving</div></div>
-    </div>
-    <div class="note">Sam is on the way to you</div>
-    <div class="cta"><span class="i">i</span> What to expect during setup</div>
+
+  <div class="track" id="track">
+    <!-- 1: confirmed -->
+    <section class="screen">
+      <div class="inner center">
+        <div class="hero-ic pink">✓</div>
+        <div class="eyebrow pink">Booking confirmed</div>
+        <div class="h1">You're all set</div>
+        <div class="card pink" style="text-align:left"><div class="k">Your visit</div><div class="v">Tue, Jun 30 · 3-5 PM</div></div>
+        <div class="row"><span class="ic">◎</span> 125 Maple Street, Riverton</div>
+      </div>
+    </section>
+
+    <!-- 2: on the way -->
+    <section class="screen">
+      <div class="inner">
+        <div class="eyebrow pink">On the way</div>
+        <div class="h1">Arriving soon</div>
+        <div class="card pink" style="display:flex;align-items:baseline;gap:10px"><div class="v" style="font-size:30px">ETA 12</div><div class="k" style="opacity:.95">minutes</div></div>
+        <div class="spec"><span class="av">SR</span><div><div class="nm">Sam Rivera</div><div class="st">Your specialist</div></div><span class="stars">★★★★★</span></div>
+        <div class="tl">
+          <div class="s done"><span class="d">✓</span><span class="t">Booked</span></div>
+          <div class="s now"><span class="d">●</span><span class="t">On route</span></div>
+          <div class="s"><span class="d"></span><span class="t">Arriving</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3: in progress -->
+    <section class="screen">
+      <div class="inner center">
+        <div class="eyebrow pink">In progress</div>
+        <div class="h1">Setup underway</div>
+        <div class="ring"><div class="hole"><span class="pct">68%</span><span class="lbl">complete</span></div></div>
+        <ul class="check-list" style="text-align:left">
+          <li class="done"><span class="b">✓</span> Equipment installed</li>
+          <li class="now"><span class="b">●</span> Network configured</li>
+          <li class="todo"><span class="b"></span> Speed test</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 4: done / rate -->
+    <section class="screen">
+      <div class="inner center">
+        <div class="hero-ic green">✓</div>
+        <div class="eyebrow green">All done</div>
+        <div class="h1">How'd it go?</div>
+        <div class="stars-big">★★★★<span class="off">★</span></div>
+        <div class="btn">Leave feedback</div>
+        <div class="sub">You're all set, Riverton.<br>Thanks for choosing Beacon.</div>
+      </div>
+    </section>
+  </div>
+
+  <div class="dots">
+    <span class="dot on"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
   </div>
 </div>
+
+<script>
+(function(){
+  var track=document.getElementById('track');
+  var screens=[].slice.call(track.children);
+  var dots=[].slice.call(document.querySelectorAll('.dot'));
+  var i=0, timer;
+  function go(n){
+    i=(n+screens.length)%screens.length;
+    track.style.transform='translateX(-'+(i*25)+'%)';
+    screens.forEach(function(s,k){ s.classList.toggle('active',k===i); });
+    dots.forEach(function(d,k){ d.classList.toggle('on',k===i); });
+  }
+  function start(){ timer=setInterval(function(){ go(i+1); }, 2900); }
+  function reset(){ clearInterval(timer); start(); }
+  document.body.addEventListener('click',function(){ go(i+1); reset(); });
+  go(0); start();
+})();
+</script>
 </body>
 </html>
